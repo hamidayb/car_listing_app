@@ -15,8 +15,6 @@ from .models import User
 
 
 class UserAPIView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -29,6 +27,9 @@ class UserAPIView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.G
 
 
 class UserLoginAPIView(APIView):
+    permission_classes = []
+    authentication_classes = []
+
     def post(self, request):
         email = request.data['email']
         password = request.data['password']
@@ -50,6 +51,8 @@ class UserLoginAPIView(APIView):
 
 class UserRegisterAPIView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = UserSerializer
+    permission_classes = []
+    authentication_classes = []
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
