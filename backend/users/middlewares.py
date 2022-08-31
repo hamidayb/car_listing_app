@@ -1,6 +1,10 @@
 from rest_framework.authtoken.models import Token
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
+from django.urls import reverse, resolve
 from .models import User
+
+
+url_names = ['loginview', 'registerview']
 
 
 class TokenAuthMiddleware:
@@ -8,18 +12,19 @@ class TokenAuthMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        token = request.META['HTTP_AUTHORIZATION'].split('Token')[1].strip()
-        # print("{color}TOKEN: {token}".format(
-        #     color='\033[96m', token=token))
-        try:
-            req_token = Token.objects.get(key=token)
+        req_url = resolve(request.path_info)
+        if (req_url.url_name not in url_names) and (not req_url.route.startswith('admin')):
+            token = request.META['HTTP_AUTHORIZATION'].split('Token')[
+                1].strip()
             try:
-                user = User.objects.get(id=req_token.user.id)
-                # print("{color}USER: {user} {black}".format(
-                #     color='\033[96m', black='\33[37m', user=user))
-                request.user = user
-                return self.get_response(request)
-            except User.DoesNotExist:
-                return HttpResponseForbidden('Not authorized')
-        except Token.DoesNotExist:
-            return HttpResponseForbidden('Invalid Token')
+                req_token = Token.objects.get(key=token)
+                try:
+                    user = User.objects.get(id=req_token.user.id)
+                    request.user = user
+                    return self.get_response(request)
+                except User.DoesNotExist:
+                    return HttpResponseForbidden('Not authorized')
+            except Token.DoesNotExist:
+                return HttpResponseForbidden('Invalid Token')
+        else:
+            return self.get_response(request)

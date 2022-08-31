@@ -6,22 +6,22 @@ from rest_framework import mixins
 from rest_framework import status
 
 from .serializer import UserSerializer, TokenSerializer
+from .middlewares import TokenAuthMiddleware
 from .models import User
 
 
-class UserAPIView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
-
-    def retrieve(self, request, *args, **kwargs):
+class UserAPIView(APIView):
+    def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+    def put(self, request):
+        user = User.objects.get(id=request.user.id)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 class UserLoginAPIView(APIView):
@@ -49,8 +49,8 @@ class UserLoginAPIView(APIView):
 
 class UserRegisterAPIView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = UserSerializer
-    permission_classes = []
     authentication_classes = []
+    permission_classes = []
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
