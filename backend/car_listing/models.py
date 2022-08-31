@@ -2,6 +2,7 @@ from django.utils import timezone
 from django.db import models
 from django.core.validators import MinValueValidator
 from users.models import User
+from .utils import unique_slug
 
 
 class CarAd(models.Model):
@@ -36,6 +37,7 @@ class CarAd(models.Model):
 
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, default=None, null=True, blank=True)
+    slug = models.SlugField(max_length=200, null=True)
     model = models.CharField(max_length=100)
     make = models.CharField(max_length=100)
     type = models.CharField(
@@ -49,12 +51,15 @@ class CarAd(models.Model):
     hybrid = models.TextField(
         max_length=50, choices=HybridChoices.choices, null=True, blank=True)
     fuel = models.CharField(
-        max_length=50, choices=FuelChoices.choices, default=None)
-    distance_covered = models.IntegerField(validators=[MinValueValidator(0)])
+        max_length=50, choices=FuelChoices.choices, null=True, blank=True)
+    distance_covered = models.IntegerField(
+        validators=[MinValueValidator(0)], default=0)
     price = models.IntegerField(validators=[MinValueValidator(100000)])
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        slug_str = "%s %s %d" % (self.make, self.model, self.year)
+        self.slug = unique_slug(slug_str)
         self.updated = timezone.now()
         super().save(*args, **kwargs)

@@ -1,11 +1,11 @@
 from rest_framework.authtoken.models import Token
 from django.http import HttpResponseForbidden, HttpResponse
-from django.urls import reverse, resolve
+from django.urls import resolve
 from .models import User
+from termcolor import colored
 
-from django.contrib.auth.hashers import make_password
 
-url_names = ['loginview', 'registerview']
+url_names = ['login_api', 'register_api', 'all_ads_api', 'ad_api']
 
 
 class TokenAuthMiddleware:
@@ -13,7 +13,6 @@ class TokenAuthMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        print(make_password('1234'))
         req_url = resolve(request.path_info)
         if (req_url.url_name not in url_names) and (not req_url.route.startswith('admin')):
             token = request.META['HTTP_AUTHORIZATION'].split('Token')[

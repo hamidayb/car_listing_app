@@ -1,7 +1,9 @@
 from django.urls import path
-from .views import CarAdsListAPIView, CarAdAPIView
+from .views import AdAPIView, MyAdAPIView, MyAdsListAPIView, AllAdsAPIView
 
 urlpatterns = [
-    path('my/', CarAdsListAPIView.as_view(), name='ads_list_api'),
-    path('<int:pk>/', CarAdAPIView.as_view(), name='ads_api'),
+    path('my/<slug>/', MyAdAPIView.as_view(), name='my_ad_api'),
+    path('my/', MyAdsListAPIView.as_view(), name='my_all_ads_api'),
+    path('<slug>/', AdAPIView.as_view(), name='ad_api'),
+    path('', AllAdsAPIView.as_view(), name='all_ads_api'),
 ]
