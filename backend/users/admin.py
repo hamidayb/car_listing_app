@@ -7,3 +7,9 @@ class UserAdminView(admin.ModelAdmin):
     list_display = ['id', 'email', 'name',
                     'gender', 'city', 'is_admin', 'created', 'updated']
     list_editable = ['gender', 'city']
+    fieldsets = (
+        (None, {
+            'fields': ('email', 'name',
+                       'gender', 'city', 'is_admin', 'is_staff', 'is_superuser')
+        }),
+    )

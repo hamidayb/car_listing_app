@@ -1,5 +1,3 @@
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,10 +5,7 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import status
 
-from django.utils.decorators import method_decorator
-
 from .serializer import UserSerializer, TokenSerializer
-from .middlewares import TokenAuthMiddleware
 from .models import User
 
 
@@ -18,10 +13,13 @@ class UserAPIView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.G
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
+    def retrieve(self, request, *args, **kwargs):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
-    @method_decorator(TokenAuthMiddleware)
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
