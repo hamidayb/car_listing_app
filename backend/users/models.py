@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from rest_framework.authtoken.models import Token
 
@@ -54,6 +55,7 @@ class User(AbstractBaseUser):
                               choices=GenderChoices.choices, default=GenderChoices.MALE)
     city = models.CharField(max_length=200, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(default=timezone.now)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -72,6 +74,10 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    def save(self, *args, **kwargs):
+        self.updated = timezone.now()
+        super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
