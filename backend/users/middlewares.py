@@ -3,6 +3,7 @@ from django.http import HttpResponseForbidden, HttpResponse
 from django.urls import reverse, resolve
 from .models import User
 
+from django.contrib.auth.hashers import make_password
 
 url_names = ['loginview', 'registerview']
 
@@ -12,6 +13,7 @@ class TokenAuthMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        print(make_password('1234'))
         req_url = resolve(request.path_info)
         if (req_url.url_name not in url_names) and (not req_url.route.startswith('admin')):
             token = request.META['HTTP_AUTHORIZATION'].split('Token')[

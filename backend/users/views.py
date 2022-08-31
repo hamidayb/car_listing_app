@@ -5,8 +5,7 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import status
 
-from .serializer import UserSerializer, TokenSerializer
-from .middlewares import TokenAuthMiddleware
+from .serializer import UserSerializer, TokenSerializer, RegisterSerializer
 from .models import User
 
 
@@ -48,7 +47,7 @@ class UserLoginAPIView(APIView):
 
 
 class UserRegisterAPIView(mixins.CreateModelMixin, generics.GenericAPIView):
-    serializer_class = UserSerializer
+    serializer_class = RegisterSerializer
     authentication_classes = []
     permission_classes = []
 

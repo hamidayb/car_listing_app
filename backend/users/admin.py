@@ -10,6 +10,6 @@ class UserAdminView(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('email', 'name',
-                       'gender', 'city', 'is_admin', 'is_staff', 'is_superuser')
+                       'gender', 'city', 'password', 'is_admin', 'is_staff', 'is_superuser')
         }),
     )
