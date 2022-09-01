@@ -3,7 +3,7 @@ from .views import UserAPIView, UserLoginAPIView, UserRegisterAPIView
 
 
 urlpatterns = [
-    path('<int:pk>/', UserAPIView.as_view(), name="userapi"),
-    path('login/', UserLoginAPIView.as_view(), name="loginview"),
-    path('register/', UserRegisterAPIView.as_view(), name="registerview")
+    path('', UserAPIView.as_view(), name="userapi"),
+    path('login/', UserLoginAPIView.as_view(), name="login_api"),
+    path('register/', UserRegisterAPIView.as_view(), name="register_api")
 ]

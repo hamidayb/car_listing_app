@@ -1,5 +1,4 @@
-frontend
-
+/frontend
 
 # dependencies
 /node_modules
@@ -53,6 +52,7 @@ Temporary Items
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
+backend/*/__pycache__/
 *.py[cod]
 
 # C extensions
@@ -108,8 +108,7 @@ target/
 *.log
 *.pot
 *.pyc
-__pycache__/
+__pycache__
 local_settings.py
 
 .env
-db.sqlite3
