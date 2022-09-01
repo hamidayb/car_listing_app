@@ -1,3 +1,7 @@
+from email.policy import default
+from hashlib import blake2b
+from pyexpat import model
+from statistics import mode
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -54,6 +58,8 @@ class User(AbstractBaseUser):
     gender = models.CharField(max_length=6,
                               choices=GenderChoices.choices, default=GenderChoices.MALE)
     city = models.CharField(max_length=200, null=True, blank=True)
+    image = models.ImageField(
+        upload_to='../static/images/users', null=True, blank=True, default='avatar.png')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
     is_admin = models.BooleanField(default=False)

@@ -1,9 +1,6 @@
-from rest_framework.decorators import api_view
 from rest_framework import mixins, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-from termcolor import colored
 
 from .serializers import CarAdSerializer
 from .models import CarAd
@@ -38,6 +35,7 @@ class MyAdsListAPIView(APIView):
     def post(self, request):
         serializer = CarAdSerializer(data=request.data)
         if serializer.is_valid():
+            serializer.validated_data['user'] = request.user
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)

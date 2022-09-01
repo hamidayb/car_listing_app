@@ -36,7 +36,7 @@ class CarAd(models.Model):
         MANUAL = 'manual', 'Manual'
 
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, default=None, null=True, blank=True)
+        User, on_delete=models.CASCADE, null=True, blank=True)
     slug = models.SlugField(max_length=200, null=True)
     model = models.CharField(max_length=100)
     make = models.CharField(max_length=100)
@@ -55,6 +55,8 @@ class CarAd(models.Model):
     distance_covered = models.IntegerField(
         validators=[MinValueValidator(0)], default=0)
     price = models.IntegerField(validators=[MinValueValidator(100000)])
+    image = models.ImageField(
+        upload_to='../static/images/cars', null=True, blank=True, default='avatar.png')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
