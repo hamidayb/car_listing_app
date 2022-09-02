@@ -11,6 +11,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'name', 'gender', 'city']
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['gender'] = User.GenderChoices(ret['gender']).label
+        return ret
+
 
 class TokenSerializer(serializers.ModelSerializer):
     class Meta:

@@ -20,7 +20,7 @@ class CarAd(models.Model):
         DIESEL = 'diesel', 'Diesel'
         CNG = 'cng', 'CNG'
         BIO_DIESEL = 'bio_diesel', 'Bio Diesel'
-        LPG = 'lgp', 'LPG'
+        LPG = 'lpg', 'LPG'
 
     class ConditionChoices(models.TextChoices):
         USED = 'used', 'Used'
@@ -42,6 +42,8 @@ class CarAd(models.Model):
     make = models.CharField(max_length=100)
     type = models.CharField(
         max_length=50, choices=TypeChoices.choices, default=TypeChoices.SEDAN)
+    color = models.CharField(max_length=30, null=True, blank=True)
+    engine_capacity = models.IntegerField(null=True, blank=True)
     year = models.IntegerField()
     transmission = models.TextField(
         max_length=50, choices=TransmissionChoices.choices, default=TransmissionChoices.MANUAL)
@@ -53,7 +55,7 @@ class CarAd(models.Model):
     fuel = models.CharField(
         max_length=50, choices=FuelChoices.choices, null=True, blank=True)
     distance_covered = models.IntegerField(
-        validators=[MinValueValidator(0)], default=0)
+        validators=[MinValueValidator(0)], null=True, blank=True, default=0)
     price = models.IntegerField(validators=[MinValueValidator(100000)])
     image = models.ImageField(
         upload_to='../static/images/cars', null=True, blank=True, default='avatar.png')
