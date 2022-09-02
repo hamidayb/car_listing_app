@@ -63,7 +63,8 @@ class CarAd(models.Model):
     updated = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        slug_str = "%s %s %d" % (self.make, self.model, self.year)
-        self.slug = unique_slug(slug_str)
-        self.updated = timezone.now()
+        if not self.slug:
+            slug_str = "%s %s %d" % (self.make, self.model, self.year)
+            self.slug = unique_slug(slug_str)
+            self.updated = timezone.now()
         super().save(*args, **kwargs)
