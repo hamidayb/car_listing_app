@@ -1,7 +1,3 @@
-from email.policy import default
-from hashlib import blake2b
-from pyexpat import model
-from statistics import mode
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -15,13 +11,13 @@ from rest_framework.authtoken.models import Token
 class UserBaseManager(BaseUserManager):
     def create_user(self, email, name, gender, city, password=None):
         if not email:
-            return ValueError('Email not provided')
+            return ValueError('Email is required')
         if not name:
-            return ValueError('Name not provided')
+            return ValueError('Name is required')
         if not gender:
-            return ValueError('Gender not provided')
+            return ValueError('Gender is required')
         if not city:
-            return ValueError('City not provided')
+            return ValueError('City is required')
         user = self.model(
             email=self.normalize_email(email),
             name=name,

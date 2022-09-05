@@ -1,6 +1,7 @@
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 from rest_framework import mixins, generics
 from rest_framework.views import APIView
-from rest_framework.response import Response
 
 from .serializers import CarAdSerializer
 from .models import CarAd
@@ -38,7 +39,7 @@ class MyAdsListAPIView(APIView):
             serializer.validated_data['user'] = request.user
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors)
+        raise ValidationError(serializer.errors)
 
 
 class MyAdAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
@@ -53,9 +54,12 @@ class MyAdAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.Ge
         return self.update(request, *args, **kwargs)
 
     def destroy(self, request, slug):
-        car_ad = CarAd.objects.get(slug=slug)
-        car_ad.delete()
-        return Response('Ad deleted successfulyy')
+        try:
+            car_ad = CarAd.objects.get(slug=slug)
+            car_ad.delete()
+            return Response('Ad deleted successfulyy')
+        except CarAd.DoesNotExist:
+            raise ValidationError("Ad doesnot exists")
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)

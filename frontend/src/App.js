@@ -1,20 +1,31 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllAds } from './redux/actions/adActions';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/header';
+import Footer from './components/footer';
+import AllAdsScreen from './screens/allAdsScreen';
+import AdScreen from './screens/adScreen';
+import LoginScreen from './screens/loginScreen';
+import RegisterScreen from './screens/registerScreen';
+import MyAdsScreen from './screens/myAdsScreen';
+import EditAdScreen from './screens/editAdScreen';
 
 function App() {
-  const allAds = useSelector((state) => state.allAds);
-  const { loading, ads, error } = allAds;
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchAllAds());
-  }, [dispatch]);
-
   return (
-    <div className='App'>
-      {ads && ads.map((ad, index) => <p>{ad.model}</p>)}
-    </div>
+    <Router>
+      <div className='flex flex-col h-screen justify-between bg-gray-50'>
+        <Header />
+        <main className='mb-auto'>
+          <Routes>
+            <Route path='/' element={<AllAdsScreen />} />
+            <Route path='/:slug' element={<AdScreen />} />
+            <Route path='/login' element={<LoginScreen />} />
+            <Route path='/register' element={<RegisterScreen />} />
+            <Route path='/my/*' element={<MyAdsScreen />} />
+            <Route path='/my/:slug/edit' element={<EditAdScreen />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 

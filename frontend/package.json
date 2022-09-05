@@ -4,6 +4,9 @@
   "private": true,
   "proxy": "http://127.0.0.1:8000",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@reduxjs/toolkit": "^1.8.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
@@ -22,6 +25,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "server": "python3 ../backend/manage.py runserver",
+    "dev": "concurrently \"npm run server\" \"npm start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

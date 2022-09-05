@@ -1,3 +1,11 @@
 export const GET_ALL_ADS_REQUEST = 'GET_ALL_ADS_REQUEST';
 export const GET_ALL_ADS_SUCCESS = 'GET_ALL_ADS_SUCCESS';
 export const GET_ALL_ADS_FAIL = 'GET_ALL_ADS_FAIL';
+
+export const GET_AD_REQUEST = 'GET_AD_REQUEST';
+export const GET_AD_SUCCESS = 'GET_AD_SUCCESS';
+export const GET_AD_FAIL = 'GET_AD_FAIL';
+
+export const GET_MY_ADS_REQUEST = 'GET_MY_ADS_REQUEST';
+export const GET_MY_ADS_SUCCESS = 'GET_MY_ADS_SUCCESS';
+export const GET_MY_ADS_FAIL = 'GET_MY_ADS_FAIL';

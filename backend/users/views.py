@@ -1,9 +1,9 @@
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import mixins
-from rest_framework import status
 
 from .serializer import UserSerializer, TokenSerializer, RegisterSerializer
 from .models import User
@@ -20,7 +20,7 @@ class UserAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors)
+        raise ValidationError(serializer.errors)
 
 
 class UserLoginAPIView(APIView):
@@ -33,17 +33,21 @@ class UserLoginAPIView(APIView):
 
         try:
             user = User.objects.get(email=email)
-            if user and user.check_password(password):
-                token = Token.objects.get(user=user)
-                token_serializer = TokenSerializer(token)
-                return Response(token_serializer.data)
-            else:
-                return Response({"error": "Invalid email or password"})
+        except User.DoesNotExist:
+            raise ValidationError("Email is not registered!")
 
-        except User.DoesNotExist as usererror:
-            return Response(data={"message": "User not found", "error": str(usererror)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response(data={"message": "Something went wrong", "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        if(not user):
+            raise ValidationError("Email is not registered!")
+
+        if not user.check_password(password):
+            raise ValidationError("Invalid Password!")
+
+        try:
+            token = Token.objects.get(user=user)
+            token_serializer = TokenSerializer(token)
+            return Response(token_serializer.data)
+        except Token.DoesNotExist:
+            raise ValidationError("Not authorized")
 
 
 class UserRegisterAPIView(mixins.CreateModelMixin, generics.GenericAPIView):
