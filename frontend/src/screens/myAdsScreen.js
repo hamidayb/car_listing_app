@@ -4,7 +4,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdCard from '../components/adCard';
 import Error from '../components/error';
 import Loader from '../components/loader';
+import SideNotification from '../components/sideNotification';
 import { getMyAds } from '../redux/actions/adActions';
+import { DELETE_AD_RESET } from '../redux/constants/adConstants';
 
 const MyAdsScreen = () => {
   const dispatch = useDispatch();
@@ -28,11 +30,28 @@ const MyAdsScreen = () => {
   const myAds = useSelector((state) => state.myAds);
   const { loading, ads, error } = myAds;
 
+  const { success, error: deleteError } = useSelector(
+    (state) => state.deleteAd
+  );
+
   useEffect(() => {
     dispatch(getMyAds());
-  }, [dispatch, userInfo]);
+    if (success) {
+      setTimeout(() => {
+        dispatch({ type: DELETE_AD_RESET });
+      }, 3000);
+    }
+
+    return () => {
+      clearTimeout();
+    };
+  }, [dispatch, userInfo, success]);
   return (
     <section className='text-gray-600 body-font'>
+      {success && (
+        <SideNotification msg='Deleted Successfully' isSuccess={true} />
+      )}
+      {deleteError && <SideNotification msg={deleteError} isSuccess={false} />}
       <div className='container px-5 py-5 mx-auto'>
         {loading ? (
           <Loader />

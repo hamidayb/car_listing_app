@@ -37,7 +37,8 @@ class CarAd(models.Model):
 
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True)
-    slug = models.SlugField(max_length=200, null=True)
+    slug = models.SlugField(max_length=200, blank=True,
+                            null=False, editable=False, db_index=True)
     model = models.CharField(max_length=100)
     make = models.CharField(max_length=100)
     type = models.CharField(
@@ -58,7 +59,7 @@ class CarAd(models.Model):
         validators=[MinValueValidator(0)], null=True, blank=True, default=0)
     price = models.IntegerField(validators=[MinValueValidator(100000)])
     image = models.ImageField(
-        upload_to='../static/images/cars', null=True, blank=True, default='avatar.png')
+        upload_to='carimages', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 

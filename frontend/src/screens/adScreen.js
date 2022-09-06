@@ -28,7 +28,7 @@ const AdScreen = () => {
                 <img
                   alt='content'
                   className='object-cover object-center h-full w-full'
-                  src='https://dummyimage.com/760x300'
+                  src={`http://localhost:8000${adInfo.image}`}
                 />
               </div>
               <h1 className='mt-5 text-gray-900 text-3xl title-font font-medium mb-1'>
@@ -55,7 +55,19 @@ const AdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Vehicle Type</span>
-                    <span className='ml-auto text-gray-900'>{adInfo.type}</span>
+                    <select
+                      className='ml-auto text-gray-900 text-right bg-gray-50'
+                      value={adInfo.type}
+                      disabled
+                    >
+                      <option value='sedan'>Sedan</option>
+                      <option value='suv'>SUV</option>
+                      <option value='coupe'>Coupe</option>
+                      <option value='minivan'>MiniVan</option>
+                      <option value='sports_car'>Sports Car</option>
+                      <option value='hatchback'>Hatch Back</option>
+                      <option value='pickup_trcuk'>Pickup Truck</option>
+                    </select>
                   </div>
                 </div>
                 <div className='w-2/4'>
@@ -91,17 +103,27 @@ const AdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Transmission</span>
-                    <span className='ml-auto text-gray-900'>
-                      {adInfo.transmission}
-                    </span>
+                    <select
+                      className='ml-auto text-gray-900 text-right bg-gray-50'
+                      value={adInfo.transmission}
+                      disabled
+                    >
+                      <option value='auto'>Auto</option>
+                      <option value='manual'>Manual</option>
+                    </select>
                   </div>
                 </div>
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Condition</span>
-                    <span className='ml-auto text-gray-900'>
-                      {adInfo.condition}
-                    </span>
+                    <select
+                      className='ml-auto text-gray-900 text-right bg-gray-50'
+                      value={adInfo.condition}
+                      disabled
+                    >
+                      <option value='used'>Used</option>
+                      <option value='new'>New</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -117,9 +139,15 @@ const AdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Hybrid</span>
-                    <span className='ml-auto text-gray-900'>
-                      {adInfo.hybrid ? adInfo.hybrid : '--'}
-                    </span>
+                    <select
+                      className='ml-auto text-gray-900 text-right'
+                      value={adInfo.hybrid || 'mild'}
+                      disabled
+                    >
+                      <option value='full'>Full</option>
+                      <option value='mild'>Mild</option>
+                      <option value='plugin'>Plug-in</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -127,9 +155,17 @@ const AdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Fuel</span>
-                    <span className='ml-auto text-gray-900'>
-                      {adInfo.fuel ? adInfo.fuel : '--'}
-                    </span>
+                    <select
+                      className='ml-auto text-gray-900 text-right'
+                      value={adInfo.fuel || 'petrol'}
+                      disabled
+                    >
+                      <option value='petrol'>Petrol</option>
+                      <option value='diesel'>Diesel</option>
+                      <option value='cng'>CNG</option>
+                      <option value='bio_diesel'>Bio Diesel</option>
+                      <option value='lpg'>LPG</option>
+                    </select>
                   </div>
                 </div>
                 <div className='w-2/4'>
@@ -137,6 +173,16 @@ const AdScreen = () => {
                     <span className='text-gray-500'>Distance Covered (km)</span>
                     <span className='ml-auto text-gray-900'>
                       {adInfo.distance_covered ? adInfo.distance_covered : '0'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className='flex mt-3'>
+                <div className='w-full'>
+                  <div className='flex border-b border-gray-200'>
+                    <span className='text-gray-900 text-lg'>Price</span>
+                    <span className='ml-auto text-gray-900'>
+                      {adInfo.price}
                     </span>
                   </div>
                 </div>

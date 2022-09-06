@@ -1,5 +1,6 @@
-from django.urls import path
 from .views import AdAPIView, MyAdAPIView, MyAdsListAPIView, AllAdsAPIView
+from django.urls import path
+
 
 urlpatterns = [
     path('my/<slug>/', MyAdAPIView.as_view(), name='my_ad_api'),

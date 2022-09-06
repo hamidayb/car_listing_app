@@ -1,3 +1,4 @@
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import mixins, generics
@@ -10,6 +11,7 @@ from .models import CarAd
 class AllAdsAPIView(APIView):
     authentication_classes = []
     permission_classes = []
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
         queryset = CarAd.objects.all()
@@ -20,6 +22,7 @@ class AllAdsAPIView(APIView):
 class AdAPIView(APIView):
     authentication_classes = []
     permission_classes = []
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request, slug):
         car_ad = CarAd.objects.get(slug=slug)
@@ -28,6 +31,8 @@ class AdAPIView(APIView):
 
 
 class MyAdsListAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
     def get(self, request):
         queryset = CarAd.objects.filter(user=request.user)
         serializer = CarAdSerializer(queryset, many=True)
@@ -45,6 +50,7 @@ class MyAdsListAPIView(APIView):
 class MyAdAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     serializer_class = CarAdSerializer
     lookup_field = 'slug'
+    parser_classes = (MultiPartParser, FormParser)
 
     def get_queryset(self):
         queryset = CarAd.objects.filter(user=self.request.user.id)

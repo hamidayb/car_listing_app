@@ -3,39 +3,61 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Loader from '../components/loader';
 import Error from '../components/error';
-import { getAd } from '../redux/actions/adActions';
-
-const getYearArr = () => {
-  const currentYear = new Date().getFullYear();
-  const range = (start, stop, step) =>
-    Array.from(
-      { length: (stop - start) / step + 1 },
-      (_, i) => start + i * step
-    );
-  const yearArr = range(currentYear, currentYear - 40, -1);
-  return yearArr;
-};
+import { getAd, updateAd } from '../redux/actions/adActions';
+import { getYearArr, getErrorsAsStr } from '../utils';
+import SuccessDialog from '../components/success';
+import { UPDATE_AD_RESET } from '../redux/constants/adConstants';
 
 const EditAdScreen = () => {
   const [adObj, setAdObj] = useState(null);
+  const [image, setImage] = useState(null);
   const { slug } = useParams();
-  const edit = true;
 
   const dispatch = useDispatch();
 
   const { loading, adInfo, error } = useSelector((state) => state.ad);
 
+  const { success, error: updateAdError } = useSelector(
+    (state) => state.updateAd
+  );
+
+  useEffect(() => {
+    dispatch(getAd(slug));
+    if (success) {
+      setTimeout(() => {
+        dispatch({ type: UPDATE_AD_RESET });
+      }, 3000);
+    }
+  }, [dispatch, success, slug]);
+
   useEffect(() => {
     if (adInfo && !adObj) {
       setAdObj(adInfo);
     }
-    if (!adInfo) {
-      dispatch(getAd(slug));
-    }
-  }, [dispatch, slug, adInfo, adObj]);
+  }, [adInfo, adObj]);
 
-  const submitHandler = () => {
-    
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    let form_data = new FormData();
+    if (adObj) {
+      form_data.append('model', adObj.model);
+      form_data.append('make', adObj.make);
+      form_data.append('type', adObj.type);
+      form_data.append('year', adObj.year);
+      form_data.append('engine_capacity', adObj.engine_capacity);
+      form_data.append('color', adObj.color);
+      form_data.append('transmission', adObj.transmission);
+      form_data.append('condition', adObj.condition);
+      form_data.append('registration_city', adObj.registration_city);
+      form_data.append('hybrid', adObj.hybrid);
+      form_data.append('fuel', adObj.fuel);
+      form_data.append('distance_covered', adObj.distance_covered);
+      form_data.append('price', adObj.price);
+      if (image) form_data.append('image', image, image.name);
+      dispatch(updateAd(form_data, slug));
+    }
+    // }
   };
 
   return (
@@ -52,7 +74,13 @@ const EditAdScreen = () => {
                 <img
                   alt='content'
                   className='object-cover object-center h-full w-full'
-                  src='https://dummyimage.com/760x300'
+                  src={`http://localhost:8000${adInfo.image}`}
+                />
+                <input
+                  type='file'
+                  id='image'
+                  accept='image/png, image/jpeg, image/webp, image/jpg'
+                  onChange={(e) => setImage(e.target.files[0])}
                 />
               </div>
               <h1 className='mt-5 text-gray-900 text-3xl title-font font-medium mb-1'>
@@ -63,45 +91,36 @@ const EditAdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Model</span>
-                    {edit ? (
-                      <input
-                        type='text'
-                        className='ml-auto text-gray-900 text-right'
-                        value={adObj.model}
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            model: e.target.value,
-                          }))
-                        }
-                      />
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.model}
-                      </span>
-                    )}
+                    <input
+                      type='text'
+                      className='ml-auto text-gray-900 text-right'
+                      value={adObj.model}
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          model: e.target.value,
+                        }))
+                      }
+                      required
+                    />
                   </div>
                 </div>
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Make</span>
-                    {edit ? (
-                      <input
-                        type='text'
-                        className='ml-auto text-gray-900 text-right'
-                        value={adObj.make}
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            make: e.target.value,
-                          }))
-                        }
-                      />
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.make}
-                      </span>
-                    )}
+
+                    <input
+                      type='text'
+                      className='ml-auto text-gray-900 text-right'
+                      value={adObj.make}
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          make: e.target.value,
+                        }))
+                      }
+                      required
+                    />
                   </div>
                 </div>
               </div>
@@ -109,57 +128,48 @@ const EditAdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Vehicle Type</span>
-                    {edit ? (
-                      <select
-                        className='ml-auto text-gray-900 text-right'
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            type: e.target.value,
-                          }))
-                        }
-                        value={adObj.type}
-                      >
-                        <option value='sedan'>Sedan</option>
-                        <option value='suv'>SUV</option>
-                        <option value='coupe'>Coupe</option>
-                        <option value='minivan'>MiniVan</option>
-                        <option value='sports_car'>Sports Car</option>
-                        <option value='hatchback'>Hatch Back</option>
-                        <option value='pickup_trcuk'>Pickup Truck</option>
-                      </select>
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.type}
-                      </span>
-                    )}
+                    <select
+                      className='ml-auto text-gray-900 text-right bg-white'
+                      value={adObj.type}
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          type: e.target.value,
+                        }))
+                      }
+                      required
+                    >
+                      <option value='sedan'>Sedan</option>
+                      <option value='suv'>SUV</option>
+                      <option value='coupe'>Coupe</option>
+                      <option value='minivan'>MiniVan</option>
+                      <option value='sports_car'>Sports Car</option>
+                      <option value='hatchback'>Hatch Back</option>
+                      <option value='pickup_trcuk'>Pickup Truck</option>
+                    </select>
                   </div>
                 </div>
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Year</span>
-                    {edit ? (
-                      <select
-                        className='ml-auto text-gray-900 text-right'
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            year: e.target.value,
-                          }))
-                        }
-                        value={adObj.year}
-                      >
-                        {getYearArr().map((year, index) => (
-                          <option key={index} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.year}
-                      </span>
-                    )}
+
+                    <select
+                      className='ml-auto text-gray-900 text-right'
+                      value={adObj.year}
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          year: e.target.value,
+                        }))
+                      }
+                      required
+                    >
+                      {getYearArr().map((year, index) => (
+                        <option key={index} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
@@ -167,54 +177,39 @@ const EditAdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Engine Capacity</span>
-                    {edit ? (
-                      <>
-                        <input
-                          type='number'
-                          min='100'
-                          max='9999'
-                          className='ml-auto text-gray-900 text-right'
-                          value={adObj.engine_capacity}
-                          onChange={(e) =>
-                            setAdObj((prevAd) => ({
-                              ...prevAd,
-                              engine_capacity: e.target.value,
-                            }))
-                          }
-                        />
-                        cc
-                      </>
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.engine_capacity ? (
-                          <span>{adObj.engine_capacity} cc</span>
-                        ) : (
-                          '--'
-                        )}
-                      </span>
-                    )}
+                    <>
+                      <input
+                        type='number'
+                        min='100'
+                        max='9999'
+                        className='ml-auto text-gray-900 text-right'
+                        value={adObj.engine_capacity}
+                        onChange={(e) =>
+                          setAdObj((prevAdObj) => ({
+                            ...prevAdObj,
+                            engine_capacity: e.target.value,
+                          }))
+                        }
+                      />
+                      cc
+                    </>
                   </div>
                 </div>
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Color</span>
-                    {edit ? (
-                      <input
-                        type='text'
-                        className='ml-auto text-gray-900 text-right'
-                        value={adObj.color || ''}
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            color: e.target.value,
-                          }))
-                        }
-                      />
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.color ? adObj.color : '--'}
-                      </span>
-                    )}
+
+                    <input
+                      type='text'
+                      className='ml-auto text-gray-900 text-right'
+                      value={adObj.color || ''}
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          color: e.target.value,
+                        }))
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -222,49 +217,39 @@ const EditAdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Transmission</span>
-                    {edit ? (
-                      <select
-                        className='ml-auto text-gray-900 text-right'
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            transmission: e.target.value,
-                          }))
-                        }
-                        value={adObj.transmission}
-                      >
-                        <option value='auto'>Auto</option>
-                        <option value='manual'>Manual</option>
-                      </select>
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.transmission}
-                      </span>
-                    )}
+
+                    <select
+                      className='ml-auto text-gray-900 text-right'
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          transmission: e.target.value,
+                        }))
+                      }
+                      value={adObj.transmission}
+                    >
+                      <option value='auto'>Auto</option>
+                      <option value='manual'>Manual</option>
+                    </select>
                   </div>
                 </div>
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Condition</span>
-                    {edit ? (
-                      <select
-                        className='ml-auto text-gray-900 text-right'
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            condition: e.target.value,
-                          }))
-                        }
-                        value={adObj.condition}
-                      >
-                        <option value='used'>Used</option>
-                        <option value='new'>New</option>
-                      </select>
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.condition}
-                      </span>
-                    )}
+
+                    <select
+                      className='ml-auto text-gray-900 text-right'
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          condition: e.target.value,
+                        }))
+                      }
+                      value={adObj.condition || 'used'}
+                    >
+                      <option value='used'>Used</option>
+                      <option value='new'>New</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -272,48 +257,38 @@ const EditAdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Registration City</span>
-                    {edit ? (
-                      <input
-                        type='text'
-                        className='ml-auto text-gray-900 text-right'
-                        value={adObj.registration_city}
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            registration_city: e.target.value,
-                          }))
-                        }
-                      />
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.registration_city}
-                      </span>
-                    )}
+
+                    <input
+                      type='text'
+                      className='ml-auto text-gray-900 text-right'
+                      value={adObj.registration_city}
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          registration_city: e.target.value,
+                        }))
+                      }
+                    />
                   </div>
                 </div>
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Hybrid</span>
-                    {edit ? (
-                      <select
-                        className='ml-auto text-gray-900 text-right'
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            hybrid: e.target.value,
-                          }))
-                        }
-                        value={adObj.hybrid || 'full'}
-                      >
-                        <option value='full'>Full</option>
-                        <option value='mild'>Mild</option>
-                        <option value='plugin'>Plug-in</option>
-                      </select>
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.hybrid ? adObj.hybrid : '--'}
-                      </span>
-                    )}
+
+                    <select
+                      className='ml-auto text-gray-900 text-right'
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          hybrid: e.target.value,
+                        }))
+                      }
+                      value={adObj.hybrid || 'full'}
+                    >
+                      <option value='full'>Full</option>
+                      <option value='mild'>Mild</option>
+                      <option value='plugin'>Plug-in</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -321,53 +296,86 @@ const EditAdScreen = () => {
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Fuel</span>
-                    {edit ? (
-                      <select
-                        className='ml-auto text-gray-900 text-right'
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            fuel: e.target.value,
-                          }))
-                        }
-                        value={adObj.fuel || 'petrol'}
-                      >
-                        <option value='petrol'>Petrol</option>
-                        <option value='diesel'>Diesel</option>
-                        <option value='cng'>CNG</option>
-                        <option value='bio_diesel'>Bio Diesel</option>
-                        <option value='lpg'>LPG</option>
-                      </select>
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.fuel ? adObj.fuel : '--'}
-                      </span>
-                    )}
+
+                    <select
+                      className='ml-auto text-gray-900 text-right'
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          fuel: e.target.value,
+                        }))
+                      }
+                      value={adObj.fuel || 'petrol'}
+                    >
+                      <option value='petrol'>Petrol</option>
+                      <option value='diesel'>Diesel</option>
+                      <option value='cng'>CNG</option>
+                      <option value='bio_diesel'>Bio Diesel</option>
+                      <option value='lpg'>LPG</option>
+                    </select>
                   </div>
                 </div>
                 <div className='w-2/4'>
                   <div className='flex border-b border-gray-200'>
                     <span className='text-gray-500'>Distance Covered (km)</span>
-                    {edit ? (
-                      <input
-                        type='number'
-                        min='0'
-                        className='ml-auto text-gray-900 text-right'
-                        value={adObj.distance_covered}
-                        onChange={(e) =>
-                          setAdObj((prevAd) => ({
-                            ...prevAd,
-                            distance_covered: e.target.value,
-                          }))
-                        }
-                      />
-                    ) : (
-                      <span className='ml-auto text-gray-900'>
-                        {adObj.distance_covered ? adObj.distance_covered : '0'}
-                      </span>
-                    )}
+
+                    <input
+                      type='number'
+                      min='0'
+                      className='ml-auto text-gray-900 text-right'
+                      value={adObj.distance_covered}
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          distance_covered: e.target.value,
+                        }))
+                      }
+                    />
                   </div>
                 </div>
+              </div>
+              <div className='flex mt-3'>
+                <div className='w-full'>
+                  <div className='flex border-b border-gray-200'>
+                    <span className='text-gray-900 text-lg'>Price</span>
+                    <input
+                      type='text'
+                      className='ml-auto text-gray-900 text-right text-lg'
+                      value={adObj.price}
+                      onChange={(e) =>
+                        setAdObj((prevAdObj) => ({
+                          ...prevAdObj,
+                          price: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className='flex mt-5'>
+                {updateAdError && (
+                  <Error
+                    errorMsg={getErrorsAsStr(updateAdError)}
+                    classes={'mx-none w-full'}
+                  />
+                )}
+              </div>
+              <div className='flex mt-5'>
+                {success && (
+                  <SuccessDialog
+                    successMsg='Updated Successfully'
+                    classes={'mx-none w-full'}
+                  />
+                )}
+              </div>
+              <div className='flex mt-5'>
+                <button
+                  onClick={submitHandler}
+                  className='w-full text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+                >
+                  Submit
+                </button>
               </div>
             </div>
           )

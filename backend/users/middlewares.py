@@ -14,7 +14,8 @@ class TokenAuthMiddleware:
 
     def __call__(self, request):
         req_url = resolve(request.path_info)
-        if (req_url.url_name not in url_names) and (not req_url.route.startswith('admin')):
+        print(req_url.route)
+        if (req_url.url_name not in url_names) and (not req_url.route.startswith('admin')) and (not req_url.route.startswith('^media')):
             token = request.META['HTTP_AUTHORIZATION'].split('Token')[
                 1].strip()
             try:

@@ -1,19 +1,34 @@
 import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationDot, faMoneyBill1 } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch } from 'react-redux';
+import {
+  faLocationDot,
+  faMoneyBill1,
+  faEdit,
+  faEye,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { roundOfPrice } from '../utils';
+import { deleteAd } from '../redux/actions/adActions';
 
 const AdCard = ({ ad }) => {
   const [searchParams] = useSearchParams();
   const edit = searchParams.get('edit') || false;
+  const dummyimage = 'https://dummyimage.com/720x400';
+
+  const dispatch = useDispatch();
+
+  const handleDelete = () => {
+    dispatch(deleteAd(ad.slug));
+  };
 
   return (
     <div className='p-4 md:w-1/3'>
       <div className='h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden'>
         <img
           className='lg:h-48 md:h-36 w-full object-cover object-center'
-          src='https://dummyimage.com/720x400'
+          src={ad.image ? `http://localhost:8000${ad.image}` : dummyimage}
           alt='blog'
         />
         <div className='p-6'>
@@ -49,18 +64,24 @@ const AdCard = ({ ad }) => {
               {edit ? (
                 <>
                   <Link
-                    to={ad.slug + '/edit'}
-                    className='text-indigo-500 inline-flex items-center items-center lg:ml-auto md:ml-0 ml-auto leading-none py-1 pr-1 border-r border-gray-400'
-                  >
-                    Edit
-                  </Link>
-
-                  <Link
                     to={'/' + ad.slug}
-                    className='text-indigo-500 inline-flex items-center items-center lg:ml-auto md:ml-0 ml-auto leading-none  py-1 pl-1'
+                    className='text-indigo-500 inline-flex items-center items-center  leading-none  py-1 pr-1 border-r border-gray-400'
                   >
-                    View
+                    <FontAwesomeIcon icon={faEye} />
                   </Link>
+                  <Link
+                    to={ad.slug + '/edit'}
+                    className='text-indigo-500 inline-flex items-center items-center   py-1 px-1 border-r border-gray-400'
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </Link>
+                  <button
+                    to={'/' + ad.slug}
+                    onClick={handleDelete}
+                    className='text-indigo-500 inline-flex items-center items-center  leading-none  py-1 pl-1'
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
                 </>
               ) : (
                 <Link

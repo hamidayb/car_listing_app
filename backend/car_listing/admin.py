@@ -6,6 +6,14 @@ from .models import CarAd
 class CarAdAdminView(admin.ModelAdmin):
     list_display = ['model', 'user', 'make', 'type', 'year', 'transmission', 'condition', 'registration_city', 'fuel',
                     'distance_covered', 'price', 'created', 'updated']
+    readonly_fields = ['slug', 'created', 'updated']
+
+    fieldsets = (
+        (None, {
+            'fields': ('slug', 'image', 'model', 'user', 'make', 'type', 'year', 'transmission', 'condition', 'registration_city', 'fuel',
+                       'distance_covered', 'price', 'created', 'updated')
+        }),
+    )
 
     list_filter = ['type', 'hybrid']
     list_display_links = ['model']
