@@ -48,6 +48,7 @@ class User(AbstractBaseUser):
     class GenderChoices(models.TextChoices):
         MALE = 'male', 'Male'
         FEMALE = 'female', 'Female'
+        OTHERS = 'others', 'Others'
 
     email = models.CharField(verbose_name='email', max_length=200, unique=True)
     name = models.CharField(max_length=200)
