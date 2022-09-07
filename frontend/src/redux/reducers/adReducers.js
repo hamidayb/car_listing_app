@@ -14,6 +14,7 @@ import {
   GET_MY_ADS_SUCCESS,
   POST_AD_FAIL,
   POST_AD_REQUEST,
+  POST_AD_RESET,
   POST_AD_SUCCESS,
   UPDATE_AD_FAIL,
   UPDATE_AD_REQUEST,
@@ -68,6 +69,8 @@ export const postAdReducer = (state = {}, action) => {
       return { loading: false, success: true };
     case POST_AD_FAIL:
       return { loading: false, error: action.payload };
+    case POST_AD_RESET:
+      return {};
     default:
       return state;
   }
@@ -93,7 +96,7 @@ export const updateAdReducer = (state = {}, action) => {
     case UPDATE_AD_REQUEST:
       return { loading: true, ...state };
     case UPDATE_AD_SUCCESS:
-      return { loading: false, adInfo: action.payload };
+      return { loading: false, success: true };
     case UPDATE_AD_FAIL:
       return { loading: false, error: action.payload };
     case UPDATE_AD_RESET:

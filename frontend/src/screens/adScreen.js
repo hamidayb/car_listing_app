@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Loader from '../components/loader';
 import Error from '../components/error';
 import { getAd } from '../redux/actions/adActions';
+import { roundOfPrice } from '../utils';
 
 const AdScreen = () => {
   const { slug } = useParams();
@@ -178,11 +179,11 @@ const AdScreen = () => {
                 </div>
               </div>
               <div className='flex mt-3'>
-                <div className='w-full'>
-                  <div className='flex border-b border-gray-200'>
-                    <span className='text-gray-900 text-lg'>Price</span>
-                    <span className='ml-auto text-gray-900'>
-                      {adInfo.price}
+                <div className='w-full justify-end'>
+                  <div className='flex border-b border-gray-200 '>
+                    <span className='text-gray-900 text-lg'>Price(PKR)</span>
+                    <span className='ml-auto text-gray-900 text-lg'>
+                      <strong>{roundOfPrice(adInfo.price)} LAC</strong>
                     </span>
                   </div>
                 </div>

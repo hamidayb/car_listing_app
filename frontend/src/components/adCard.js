@@ -22,7 +22,6 @@ const AdCard = ({ ad }) => {
   const handleDelete = () => {
     dispatch(deleteAd(ad.slug));
   };
-
   return (
     <div className='p-4 md:w-1/3'>
       <div className='h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden'>
@@ -76,8 +75,9 @@ const AdCard = ({ ad }) => {
                     <FontAwesomeIcon icon={faEdit} />
                   </Link>
                   <button
-                    to={'/' + ad.slug}
+                    // to={'/' + ad.slug}
                     onClick={handleDelete}
+                    data-modal-toggle='popup-modal'
                     className='text-indigo-500 inline-flex items-center items-center  leading-none  py-1 pl-1'
                   >
                     <FontAwesomeIcon icon={faTrash} />

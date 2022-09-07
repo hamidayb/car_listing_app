@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AdCard from '../components/adCard';
 import Error from '../components/error';
 import Loader from '../components/loader';
-import { getAllAds } from '../redux/actions/adActions';
+import { getAllAds, getMyAds } from '../redux/actions/adActions';
 
 const AllAdsScreen = () => {
   const allAds = useSelector((state) => state.allAds);
@@ -12,6 +12,7 @@ const AllAdsScreen = () => {
 
   useEffect(() => {
     dispatch(getAllAds());
+    dispatch(getMyAds());
   }, [dispatch]);
   return (
     <section className='text-gray-600 body-font'>

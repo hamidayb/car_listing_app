@@ -1,19 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Loader from '../components/loader';
 import Error from '../components/error';
 import { getAd, updateAd } from '../redux/actions/adActions';
 import { getYearArr, getErrorsAsStr } from '../utils';
-import SuccessDialog from '../components/success';
 import { UPDATE_AD_RESET } from '../redux/constants/adConstants';
+import SideNotification from '../components/sideNotification';
 
 const EditAdScreen = () => {
   const [adObj, setAdObj] = useState(null);
   const [image, setImage] = useState(null);
+  const [imgSrc, setImgSrc] = useState(null);
   const { slug } = useParams();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const loginUserState = useSelector((state) => state.userLogin);
+  const { userInfo } = loginUserState;
+
+  if (!userInfo) {
+    navigate({ pathname: '/' });
+  }
 
   const { loading, adInfo, error } = useSelector((state) => state.ad);
 
@@ -21,20 +30,36 @@ const EditAdScreen = () => {
     (state) => state.updateAd
   );
 
+  if (error) {
+    console.log(error);
+  }
+
   useEffect(() => {
     dispatch(getAd(slug));
     if (success) {
       setTimeout(() => {
         dispatch({ type: UPDATE_AD_RESET });
-      }, 3000);
+        navigate('/my');
+      }, 2000);
     }
-  }, [dispatch, success, slug]);
+  }, [dispatch, success, slug, navigate]);
 
   useEffect(() => {
     if (adInfo && !adObj) {
       setAdObj(adInfo);
     }
   }, [adInfo, adObj]);
+
+  const onImgChangeHandler = (e) => {
+    var file = e.target.files[0];
+    var reader = new FileReader();
+
+    setImage(file);
+
+    reader.onloadend = function (e) {
+      setImgSrc([reader.result]);
+    };
+  };
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -57,11 +82,13 @@ const EditAdScreen = () => {
       if (image) form_data.append('image', image, image.name);
       dispatch(updateAd(form_data, slug));
     }
-    // }
   };
 
   return (
     <section className='text-gray-600 body-font'>
+      {success && (
+        <SideNotification msg='Updated Successfully' isSuccess={true} />
+      )}
       <div className='container px-5 py-5 mx-auto flex flex-col'>
         {loading ? (
           <Loader />
@@ -74,13 +101,13 @@ const EditAdScreen = () => {
                 <img
                   alt='content'
                   className='object-cover object-center h-full w-full'
-                  src={`http://localhost:8000${adInfo.image}`}
+                  src={imgSrc || `http://localhost:8000${adInfo.image}`}
                 />
                 <input
                   type='file'
                   id='image'
                   accept='image/png, image/jpeg, image/webp, image/jpg'
-                  onChange={(e) => setImage(e.target.files[0])}
+                  onChange={onImgChangeHandler}
                 />
               </div>
               <h1 className='mt-5 text-gray-900 text-3xl title-font font-medium mb-1'>
@@ -357,14 +384,6 @@ const EditAdScreen = () => {
                 {updateAdError && (
                   <Error
                     errorMsg={getErrorsAsStr(updateAdError)}
-                    classes={'mx-none w-full'}
-                  />
-                )}
-              </div>
-              <div className='flex mt-5'>
-                {success && (
-                  <SuccessDialog
-                    successMsg='Updated Successfully'
                     classes={'mx-none w-full'}
                   />
                 )}

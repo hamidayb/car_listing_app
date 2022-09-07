@@ -101,6 +101,7 @@ const RegisterScreen = () => {
                 >
                   <option value='male'>Male</option>
                   <option value='female'>Female</option>
+                  <option value='others'>Others</option>
                 </select>
               </div>
               <div className='relative mb-4'>

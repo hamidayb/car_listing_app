@@ -45,9 +45,9 @@ const Header = () => {
               <Link to='/my' className='mr-6 hover:text-gray-900'>
                 My Ads
               </Link>
-              <Link to='/' className='mr-6 hover:text-gray-900'>
+              {/* <Link to='/' className='mr-6 hover:text-gray-900'>
                 My Profile
-              </Link>
+              </Link> */}
             </>
           )}
         </nav>

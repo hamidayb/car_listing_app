@@ -13,6 +13,7 @@ export const GET_MY_ADS_FAIL = 'GET_MY_ADS_FAIL';
 export const POST_AD_REQUEST = 'POST_AD_REQUEST';
 export const POST_AD_SUCCESS = 'POST_AD_SUCCESS';
 export const POST_AD_FAIL = 'POST_AD_FAIL';
+export const POST_AD_RESET = 'POST_AD_RESET';
 
 export const UPDATE_AD_REQUEST = 'UPDATE_AD_REQUEST';
 export const UPDATE_AD_SUCCESS = 'UPDATE_AD_SUCCESS';

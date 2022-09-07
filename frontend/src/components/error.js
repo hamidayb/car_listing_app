@@ -8,9 +8,6 @@ const Error = ({ errorMsg, classes }) => {
       }`}
       role='alert'
     >
-      {/* <span className='font-medium mr-3'>
-        <i className='fa-sharp fa-solid fa-circle-exclamation'></i>
-      </span> */}
       {errorMsg}
     </div>
   );

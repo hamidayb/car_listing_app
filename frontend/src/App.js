@@ -7,6 +7,7 @@ import LoginScreen from './screens/loginScreen';
 import RegisterScreen from './screens/registerScreen';
 import MyAdsScreen from './screens/myAdsScreen';
 import EditAdScreen from './screens/editAdScreen';
+import CreateAdScreen from './screens/createAdScreen';
 
 function App() {
   return (
@@ -19,8 +20,10 @@ function App() {
             <Route path='/:slug' element={<AdScreen />} />
             <Route path='/login' element={<LoginScreen />} />
             <Route path='/register' element={<RegisterScreen />} />
-            <Route path='/my/*' element={<MyAdsScreen />} />
             <Route path='/my/:slug/edit' element={<EditAdScreen />} />
+            <Route path='/my/create' element={<CreateAdScreen />} />
+            <Route path='/my' element={<MyAdsScreen />} />
+            {/* <Route path='/my/confirm' element={<ConfirmDialogue />} /> */}
           </Routes>
         </main>
         <Footer />
